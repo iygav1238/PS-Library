@@ -9,21 +9,16 @@ int main() {
         graph[parent].push_back(i);
     }
 
-    auto Tourist = [&](int node) {
-        vector<pair<int, int>> st = {{node, 0}};
-        int dep = 0;
-        while (!st.empty()) {
-            auto [u, stat] = st.back(); st.pop_back();
-            if (stat == 1) {
-                dep++;
-                IN[u] = dep;
-                st.push_back({u, 1});
-                sort(graph[u].rbegin(), graph[u].rend());
-                for (auto v : graph[u]) st.push_back({v, 0});
-            } else OUT[u] = dep;
+    int dep = 0;
+    function<void(int, int)> Tourist = [&](int u, int p) {
+        IN[u] = ++dep;
+        for (int v : graph[u]) {
+            if (v == p) continue;
+            Tourist(v, u);
         }
+        OUT[u] = dep;
     };
-    Tourist(1);
+    Tourist(1, 0);
 
     return 0;
 }
